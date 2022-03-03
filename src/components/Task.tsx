@@ -3,9 +3,10 @@ import {ListItem} from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import {EditSpan} from "./EditSpan";
 import {ButtonComponents} from "./ButtonComponents";
-import {TaskType} from "../Todolist";
+import {TaskStatuses, TaskType} from "../api/TodoApi";
+
 type TaskPropsType={
-	changeTaskStatus: (taskId: string, isDone: boolean, todolistID: string) => void
+	changeTaskStatus: (taskId: string, status:TaskStatuses, todolistID: string) => void
 	onChangeTitle: (taskId: string, title: string, todolistID: string) => void
 	onClickHandlerRemove:(taskId: string)=>void
 	task:TaskType
@@ -15,7 +16,8 @@ type TaskPropsType={
 }
 export const Task = React.memo((props:TaskPropsType)=>{
 	const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-		props.changeTaskStatus(props.task.id, e.currentTarget.checked, props.todolistID);
+		const taskStatus = e.currentTarget.checked ? TaskStatuses.Completed : TaskStatuses.New;
+		props.changeTaskStatus(props.task.id, taskStatus, props.todolistID);
 	}
 	const onChangeTitleHandler = (title: string) => {
 		props.onChangeTitle(props.task.id, title, props.todolistID);
@@ -24,10 +26,10 @@ export const Task = React.memo((props:TaskPropsType)=>{
 					 disableGutters
 					 style={{padding: '0px', justifyContent: 'space-between', display: 'flex'}}
 					 key={props.task.id}
-					 className={props.task.isDone ? "is-done" : ""}>
+					 className={props.task.status ? "is-done" : ""}>
 		<Checkbox
 			onChange={onChangeHandler}
-			checked={props.task.isDone}
+			checked={props.task.status === TaskStatuses.Completed}
 			size={'small'}
 			color={'primary'}
 		/>
